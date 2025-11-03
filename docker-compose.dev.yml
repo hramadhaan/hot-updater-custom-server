@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: hot_updater_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.dev
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/hot_updater_db
+      - DIRECT_URL=postgresql://postgres:postgres@db:5432/hot_updater_db
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
